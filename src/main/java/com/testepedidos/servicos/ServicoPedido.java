@@ -24,19 +24,17 @@ import com.testepedidos.dados.RepositorioPedidos;
 import com.testepedidos.dto.PedidosDTO;
 import com.testepedidos.modelos.Pedido;
 
-
 @Service
 public class ServicoPedido {
 	@Autowired
 	private RepositorioPedidos repositorioPedidos;
-	
-	private static final Logger logger = LoggerFactory.getLogger(ServicoPedido.class);
 
+	private static final Logger logger = LoggerFactory.getLogger(ServicoPedido.class);
 
 	public ServicoPedido(RepositorioPedidos repositorioPedidos) {
 		this.repositorioPedidos = repositorioPedidos;
 	}
-	
+
 	public PedidosDTO criarPedido(PedidosDTO pedido) {
 		Pedido pedidoEntidade = new Pedido(pedido); // Configura UUID, status e data de criação no Pedido
 		pedidoEntidade.setStatus("CRIADO");
@@ -44,46 +42,51 @@ public class ServicoPedido {
 		Pedido pedidoSalvo = repositorioPedidos.save(pedidoEntidade);
 		return new PedidosDTO(pedidoSalvo);
 	}
+
 	public PedidosDTO atualizarPedido(UUID id, PedidosDTO pedidoDTO) {
-        Optional<Pedido> optionalPedido = repositorioPedidos.findById(id);
+		Optional<Pedido> optionalPedido = repositorioPedidos.findById(id);
 
-        if (!optionalPedido.isPresent()) {
-            // Lançar exceção ou retornar um valor indicando que o pedido não foi encontrado
-            System.out.println("Pedido não encontrado com o id: " + id);
-        }
+		if (!optionalPedido.isPresent()) {
+			// Lançar exceção ou retornar um valor indicando que o pedido não foi encontrado
+			System.out.println("Pedido não encontrado com o id: " + id);
+		}
 
-        Pedido pedidoExistente = optionalPedido.get();
-        
-        // Atualizar os campos do pedidoExistente com os valores do pedidoDTO
-        if (pedidoDTO.getDescricao() != null) {
-            pedidoExistente.setDescricao(pedidoDTO.getDescricao());
-        }
-        if (pedidoDTO.getStatus() != null) {
-            pedidoExistente.setStatus(pedidoDTO.getStatus());
-        }
-        if (pedidoDTO.getDataCriacao() != null) {
-            pedidoExistente.setDataCriacao(pedidoDTO.getDataCriacao());
-        }
+		Pedido pedidoExistente = optionalPedido.get();
 
-        Pedido atualizadoPedido = repositorioPedidos.save(pedidoExistente);
-        return new PedidosDTO(atualizadoPedido);
-    }
-	
+		// Atualizar os campos do pedidoExistente com os valores do pedidoDTO
+		if (pedidoDTO.getDescricao() != null) {
+			pedidoExistente.setDescricao(pedidoDTO.getDescricao());
+		}
+		if (pedidoDTO.getStatus() != null) {
+			pedidoExistente.setStatus(pedidoDTO.getStatus());
+		}
+		if (pedidoDTO.getDataCriacao() != null) {
+			pedidoExistente.setDataCriacao(pedidoDTO.getDataCriacao());
+		}
 
-	public List<PedidosDTO> consultarPedidos(){
-		logger.info("Método consultarPedidos() chamado.");
-		
-		List<Pedido> pedido =repositorioPedidos.findAll();
-		logger.info("Total de usuários encontrados: {}", pedido.size());
-		
-		List<PedidosDTO> dtoPedidos = pedido.stream().map(PedidosDTO::new).collect(Collectors.toList());
-		
-		logger.info("Total de RequestUsuario mapeados: {}", dtoPedidos.size());
-		
-		return dtoPedidos;
-
-		
-		
+		Pedido atualizadoPedido = repositorioPedidos.save(pedidoExistente);
+		return new PedidosDTO(atualizadoPedido);
 	}
-	
+
+	public List<PedidosDTO> consultarPedidos() {
+		logger.info("Método consultarPedidos() chamado.");
+
+		List<Pedido> pedido = repositorioPedidos.findAll();
+		logger.info("Total de usuários encontrados: {}", pedido.size());
+
+		List<PedidosDTO> dtoPedidos = pedido.stream().map(PedidosDTO::new).collect(Collectors.toList());
+
+		logger.info("Total de RequestUsuario mapeados: {}", dtoPedidos.size());
+
+		return dtoPedidos;
+	}
+
+	public List<PedidosDTO> consultarPedidosPorStatus(String status) {
+		if (status != null) {
+			return repositorioPedidos.findByStatus(status).stream().map(PedidosDTO::new).collect(Collectors.toList());
+		} else {
+			return consultarPedidos();
+		}
+	}
+
 }
