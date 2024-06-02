@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,7 +37,7 @@ public class ControlePedidos {
 
 	@Autowired
 	private RepositorioPedidos repositorioPedidos;
-
+	
 	@Autowired
 	public ControlePedidos(ServicoPedido servicoPedido) {
 		this.servicoPedido = servicoPedido;
@@ -55,4 +56,11 @@ public class ControlePedidos {
         logger.info("Requisição para alterar pedido recebida: {}", pedidoDTO);
         return servicoPedido.atualizarPedido(id, pedidoDTO);
     }
+	
+	@GetMapping
+	public List<PedidosDTO> consultarPedidos(){
+		logger.info("Requisição para listar todos os usuários recebida");
+		return servicoPedido.consultarPedidos();
+	}
+	
 }
