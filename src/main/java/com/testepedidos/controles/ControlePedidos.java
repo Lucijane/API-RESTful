@@ -1,7 +1,9 @@
 package com.testepedidos.controles;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -44,9 +46,13 @@ public class ControlePedidos {
 	public ResponseEntity<Pedido> criarPedido(@RequestBody Pedido pedido) {
 		pedido.setStatus("CRIADO");
 		pedido.setDataCriacao(new Timestamp(System.currentTimeMillis()));
-		// Não é necessário definir o status aqui, pois já está sendo definido no
-		// construtor de Pedido
 		Pedido novoPedido = repositorioPedidos.save(pedido);
 		return ResponseEntity.ok(novoPedido);
 	}
+
+	@PatchMapping("/patch/{id}")
+    public PedidosDTO atualizarPedido(@PathVariable UUID id, @RequestBody PedidosDTO pedidoDTO) {
+        logger.info("Requisição para alterar pedido recebida: {}", pedidoDTO);
+        return servicoPedido.atualizarPedido(id, pedidoDTO);
+    }
 }

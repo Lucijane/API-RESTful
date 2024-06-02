@@ -35,4 +35,28 @@ public class ServicoPedido {
 		Pedido pedidoSalvo = repositorioPedidos.save(pedidoEntidade);
 		return new PedidosDTO(pedidoSalvo);
 	}
+	public PedidosDTO atualizarPedido(UUID id, PedidosDTO pedidoDTO) {
+        Optional<Pedido> optionalPedido = repositorioPedidos.findById(id);
+
+        if (!optionalPedido.isPresent()) {
+            // Lançar exceção ou retornar um valor indicando que o pedido não foi encontrado
+            System.out.println("Pedido não encontrado com o id: " + id);
+        }
+
+        Pedido pedidoExistente = optionalPedido.get();
+        
+        // Atualizar os campos do pedidoExistente com os valores do pedidoDTO
+        if (pedidoDTO.getDescricao() != null) {
+            pedidoExistente.setDescricao(pedidoDTO.getDescricao());
+        }
+        if (pedidoDTO.getStatus() != null) {
+            pedidoExistente.setStatus(pedidoDTO.getStatus());
+        }
+        if (pedidoDTO.getDataCriacao() != null) {
+            pedidoExistente.setDataCriacao(pedidoDTO.getDataCriacao());
+        }
+
+        Pedido atualizadoPedido = repositorioPedidos.save(pedidoExistente);
+        return new PedidosDTO(atualizadoPedido);
+    }
 }
